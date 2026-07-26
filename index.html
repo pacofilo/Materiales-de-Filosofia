@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materiales de Filosofía — IES Alquipir</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #FAF9F5;
+            --bg-secondary: #F0EDE6;
+            --bg-card: #FFFFFF;
+            --text-primary: #2D2B28;
+            --text-secondary: #6B6560;
+            --text-tertiary: #9B9590;
+            --accent: #D97757;
+            --accent-light: rgba(217, 119, 87, 0.08);
+            --border: rgba(0, 0, 0, 0.07);
+            --border-hover: rgba(0, 0, 0, 0.15);
+            --shadow-md: 0 3px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04);
+            --radius: 14px;
+            --radius-sm: 8px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6; min-height: 100vh; font-size: 16px;
+        }
+
+        /* HEADER */
+        .header {
+            background: var(--bg-primary); border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 100;
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        }
+        .header-inner {
+            max-width: 1280px; margin: 0 auto; padding: 15px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo-area { display: flex; align-items: center; gap: 12px; }
+        .logo-icon {
+            width: 38px; height: 38px; background: var(--accent);
+            border-radius: 10px; display: flex; align-items: center;
+            justify-content: center; color: white; font-weight: 700; font-size: 17px;
+        }
+        .logo-text {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 23px; color: var(--text-primary); letter-spacing: -0.02em;
+        }
+        .header-badge {
+            font-size: 12px; color: var(--text-tertiary); background: var(--bg-secondary);
+            padding: 4px 11px; border-radius: 20px; font-weight: 500;
+        }
+
+        /* MAIN */
+        .main { max-width: 1280px; margin: 0 auto; padding: 42px 20px 80px; }
+        .intro { margin-bottom: 46px; max-width: 700px; }
+        .intro h1 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 42px; font-weight: 400; letter-spacing: -0.025em;
+            line-height: 1.15; margin-bottom: 14px;
+        }
+        .intro p { color: var(--text-secondary); font-size: 16px; line-height: 1.75; }
+        .intro .autoria { color: var(--text-tertiary); font-size: 14px; margin-top: 10px; }
+
+        /* SECTIONS */
+        .section { margin-bottom: 64px; }
+
+        /* GRID — 3 por línea */
+        .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+        /* CARD */
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius); text-decoration: none; color: inherit;
+            transition: all 0.22s ease; display: flex; flex-direction: column;
+            overflow: hidden; position: relative;
+        }
+        .card:hover { border-color: var(--border-hover); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+        .card:hover .card-title { color: var(--accent); }
+
+        /* Image */
+        .card-img {
+            width: 100%; aspect-ratio: 4 / 3; overflow: hidden; flex-shrink: 0;
+            background: #fff;
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+        }
+        /* Capa trasera: misma imagen desenfocada como fondo de relleno (efecto Apple) */
+        .card-img .img-bg {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; object-position: center;
+            filter: blur(22px) brightness(1.15) saturate(0.6);
+            transform: scale(1.2);
+            opacity: 0; transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+        /* Velo blanco semitransparente sobre el blur */
+        .card-img::after {
+            content: ''; position: absolute; inset: 0;
+            background: rgba(255,255,255,0.50);
+            pointer-events: none; z-index: 1;
+        }
+        /* Foto principal: entera, sin recorte */
+        .card-img .img-fg {
+            position: relative; z-index: 2;
+            max-width: 100%; max-height: 100%;
+            width: auto; height: auto;
+            object-fit: contain;
+            display: block; opacity: 0;
+            padding: 8px;
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+        .card-img .img-bg.loaded { opacity: 1; }
+        .card-img .img-fg.loaded { opacity: 1; }
+        .card:hover .card-img .img-fg { transform: scale(1.04); }
+        .card-img-placeholder {
+            font-size: 42px; opacity: 0.18; position: absolute; z-index: 0;
+            transition: opacity 0.3s ease;
+        }
+        .card-img:has(.img-fg.loaded) .card-img-placeholder { opacity: 0; }
+
+        /* Body */
+        .card-body { padding: 20px 22px 18px; display: flex; flex-direction: column; gap: 7px; flex: 1; }
+        .card-title { font-size: 17px; font-weight: 600; color: var(--text-primary); transition: color 0.2s ease; line-height: 1.35; padding-right: 20px; }
+        .card-desc { font-size: 14px; color: var(--text-tertiary); line-height: 1.55; }
+        .card-tag {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 11px; font-weight: 500; color: var(--accent);
+            background: var(--accent-light); padding: 3px 9px;
+            border-radius: 6px; width: fit-content; margin-top: 6px;
+        }
+        .card-arrow {
+            position: absolute; bottom: 18px; right: 20px; color: var(--text-tertiary);
+            opacity: 0; transform: translateX(-4px); transition: all 0.2s ease; font-size: 15px;
+        }
+        .card:hover .card-arrow { opacity: 1; transform: translateX(0); }
+
+        /* Badges */
+        .badge-ready { color: #3a8a5c; background: rgba(58,138,92,0.09); }
+        .badge-wip   { color: #c08a30; background: rgba(192,138,48,0.09); }
+        .badge-quiz  { color: #6366f1; background: rgba(99,102,241,0.09); }
+
+        /* FOOTER */
+        .footer { max-width: 1280px; margin: 0 auto; padding: 24px 20px; border-top: 1px solid var(--border); text-align: center; }
+        .footer p { font-size: 13px; color: var(--text-tertiary); }
+        .footer a { color: var(--accent); text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+
+        /* RESPONSIVE */
+        @media (max-width: 980px) {
+            .cards-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 640px) {
+            .cards-grid { grid-template-columns: 1fr; }
+            .intro h1 { font-size: 30px; }
+            .header-badge { display: none; }
+            .main { padding: 28px 14px 60px; }
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+        .section { animation: fadeUp 0.4s ease both; }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-inner">
+        <div class="logo-area">
+            <div class="logo-icon">φ</div>
+            <span class="logo-text">Filosofía</span>
+        </div>
+        <span class="header-badge">IES Alquipir · Cehegín</span>
+    </div>
+</header>
+
+<main class="main">
+    <div class="intro">
+        <h1>Materiales de Filosofía</h1>
+        <p>Repositorio de recursos educativos para las asignaturas del Departamento de Filosofía del IES Alquipir. Páginas interactivas, apuntes y actividades organizados por curso y asignatura.</p>
+        <p class="autoria">Creado por Francisco Jiménez Amor, profesor del I.E.S. Alquipir de Cehegín.</p>
+    </div>
+
+    <!-- ===== ASIGNATURAS ===== -->
+    <div class="section">
+        <div class="cards-grid">
+
+            <a class="card" href="historia-de-la-filosofia.html" data-wiki="The_School_of_Athens">
+                <div class="card-img"><span class="card-img-placeholder">📜</span><img class="img-bg" alt=""><img class="img-fg" alt="Historia de la Filosofía"></div>
+                <div class="card-body">
+                    <span class="card-title">Historia de la Filosofía</span>
+                    <span class="card-desc">2º de Bachillerato · Corrientes, autores y textos del pensamiento occidental para la prueba de acceso a la universidad.</span>
+                    <span class="card-tag badge-ready">✓ Publicado</span>
+                </div>
+                <span class="card-arrow">→</span>
+            </a>
+
+            <a class="card" href="#" data-wiki="The_Thinker">
+                <div class="card-img"><span class="card-img-placeholder">🤔</span><img class="img-bg" alt=""><img class="img-fg" alt="Filosofía"></div>
+                <div class="card-body">
+                    <span class="card-title">Filosofía</span>
+                    <span class="card-desc">1º de Bachillerato · El ser humano, el conocimiento, la ética y la filosofía política.</span>
+                    <span class="card-tag badge-wip">🚧 Próximamente</span>
+                </div>
+                <span class="card-arrow">→</span>
+            </a>
+
+            <a class="card" href="#" data-wiki="Lady_Justice">
+                <div class="card-img"><span class="card-img-placeholder">⚖️</span><img class="img-bg" alt=""><img class="img-fg" alt="Educación en Valores Cívicos y Éticos"></div>
+                <div class="card-body">
+                    <span class="card-title">Educación en Valores Cívicos y Éticos</span>
+                    <span class="card-desc">2º de E.S.O. · Valores democráticos, derechos humanos y convivencia.</span>
+                    <span class="card-tag badge-wip">🚧 Próximamente</span>
+                </div>
+                <span class="card-arrow">→</span>
+            </a>
+
+            <a class="card" href="https://pacofilo.github.io/identidad-y-personalidad/" target="_blank" data-wiki="Psychology">
+                <div class="card-img"><span class="card-img-placeholder">🧠</span><img class="img-bg" alt=""><img class="img-fg" alt="Psicología"></div>
+                <div class="card-body">
+                    <span class="card-title">Psicología</span>
+                    <span class="card-desc">2º de Bachillerato · Procesos psicológicos, identidad, personalidad y desarrollo humano.</span>
+                    <span class="card-tag badge-ready">✓ Publicado</span>
+                </div>
+                <span class="card-arrow">→</span>
+            </a>
+
+        </div>
+    </div>
+
+</main>
+
+<footer class="footer">
+    <p>Materiales elaborados por Francisco Jiménez Amor · Dpto. de Filosofía · IES Alquipir de Cehegín</p>
+</footer>
+
+<script>
+// Carga imágenes desde la Wikipedia REST API usando el data-wiki de cada tarjeta
+(async () => {
+    const cards = document.querySelectorAll('.card[data-wiki]');
+
+    const loadImage = (card) => {
+        const title  = card.dataset.wiki;
+        const imgBg  = card.querySelector('.card-img .img-bg');
+        const imgFg  = card.querySelector('.card-img .img-fg');
+        if (!imgFg) return;
+
+        fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`)
+            .then(r => r.json())
+            .then(data => {
+                const src = data.originalimage?.source || data.thumbnail?.source;
+                if (!src) return;
+                const bigSrc = src.replace(/\/\d+px-/, '/640px-');
+
+                // Imagen de fondo (blur)
+                if (imgBg) {
+                    imgBg.onload = () => imgBg.classList.add('loaded');
+                    imgBg.src = bigSrc;
+                }
+                // Imagen principal (contain, entera)
+                imgFg.onload = () => imgFg.classList.add('loaded');
+                imgFg.onerror = () => {};
+                imgFg.src = bigSrc;
+            })
+            .catch(() => {});
+    };
+
+    // Intersection Observer: carga solo las tarjetas visibles/próximas
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                loadImage(entry.target);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { rootMargin: '200px' });
+
+    cards.forEach(card => observer.observe(card));
+})();
+</script>
+
+</body>
+</html>
